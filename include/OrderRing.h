@@ -20,6 +20,9 @@
 #define ORDER_BOOK_RING_SIZE (15)
 #endif
 
+//Our heavens may change but not our spirit
+#define MOTTO ("Caelum non animum muto")
+
 namespace NERV {
 
 enum Action {

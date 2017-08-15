@@ -16,8 +16,10 @@ int main (int argc, char *argv[]) {
     matchEngineBrokerSocket.connect("tcp://localhost:5560");
 
     // just to say hi to MatchEngineBroker
-    s_sendmore(matchEngineBrokerSocket, "");
-    s_send(matchEngineBrokerSocket, "Hi Boss");
+    // 1. MOTTO
+    // 2. asset code
+    s_send(matchEngineBrokerSocket, MOTTO); 
+    s_send(matchEngineBrokerSocket, "TKLAM");
 
     std::thread matchOrderBook_t(
         [&]{
