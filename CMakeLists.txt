@@ -24,7 +24,7 @@ set(global_optimization_flag -O3)
 add_definitions(${global_optimization_flag})
 
 #config of OrderRingServer
-ADD_DEFINITIONS(-DRING_SIZE=10)
+ADD_DEFINITIONS(-DRING_SIZE=10 -DORDER_BOOK_RING_SIZE=12)
 
 set(LIB_SOURCE 
     src/OrderRing.cpp

@@ -5,9 +5,16 @@
 int main (int argc, char *argv[]) {
     NERV::OrderBook orderBook;
 
-    using ORDER_D = L3::Disruptor<NERV::Order*, ORDER_BOOK_RING_SIZE>;
+    using ORDER_D = L3::Disruptor<NERV::Order, ORDER_BOOK_RING_SIZE, L3::Tag<NERV::Action::OrderBookMatching>>;
     using MATCH_ORDER_BOOK_GET = ORDER_D::Get<L3::Tag<NERV::Action::OrderBookMatching>>;
     using FILL_ORDER_BOOK_PUT = ORDER_D::Put<L3::Barrier<MATCH_ORDER_BOOK_GET>, L3::CommitPolicy::Shared>;
+
+    /*
+    using TRADED_ORDER_D = L3::Disruptor<NERV::TradedOrder, ORDER_BOOK_RING_SIZE, L3::Tag<NERV::Action::OrderBookCommitTraded>>;
+    using PUB_TRADED_ORDER_GET = TRADED_ORDER_D::Get<L3::Tag<NERV::Action::OrderBookCommitTraded>>;
+    using COMMIT_TRADED_ORDER_PUT = TRADED_ORDER_D::Put<L3::Barrier<PUB_TRADED_ORDER_GET>, L3::CommitPolicy::Shared>;
+    */
+
     NERV::FillOrderBook<FILL_ORDER_BOOK_PUT> fillOrderBook;
     NERV::MatchOrderBook<MATCH_ORDER_BOOK_GET> matchOrderBook;
 
@@ -34,9 +41,7 @@ int main (int argc, char *argv[]) {
             while(true) {
                 //  Wait for next request from client
                 std::string request = s_recv (matchEngineBrokerSocket);
-                NERV::TradedOrder * o = new NERV::TradedOrder();
-                o->fromOrderCmdStr(request);
-                fillOrderBook.fill(o);
+                fillOrderBook.fill(request);
                 
                 /*
                 std::cout << "[MatchEngine] Enqueue request: " << std::endl;
@@ -49,4 +54,5 @@ int main (int argc, char *argv[]) {
 
     matchOrderBook_t.join();
     waitRequest_t.join();
+    return 0;
 }

@@ -17,7 +17,7 @@
 #endif
 
 #ifndef ORDER_BOOK_RING_SIZE
-#define ORDER_BOOK_RING_SIZE (15)
+#define ORDER_BOOK_RING_SIZE (11)
 #endif
 
 //Our heavens may change but not our spirit
@@ -28,7 +28,8 @@ namespace NERV {
 enum Action {
     OrderRouting = 1,
     OrderJournaling = 2,
-    OrderBookMatching = 4
+    OrderBookMatching = 4,
+    OrderBookCommitTraded = 8
 };
 
 enum OrderType {
@@ -62,20 +63,14 @@ struct Order {
     virtual void fromCmdStr(const std::string & str);
 };
 
-struct TradedOrder : public Order {
+struct TradedOrder {
+    Order askOrder;
+    Order bidOrder;
     boost::multiprecision::cpp_dec_float_50 tradedPrice;
+    boost::multiprecision::cpp_dec_float_50 tradedQuantity;
 
     // return human friendly string
-    std::string str() const override;
-
-    // return a string to be processed by the MatchEngine
-    std::string cmdStr() const override;
-
-    // populate the fields from a MatchEngine command string
-    void fromCmdStr(const std::string & str) override;
-
-    // populate the fields from a MatchEngine command string (Order)
-    void fromOrderCmdStr(const std::string & orderStr);
+    std::string str() const;
 };
 }
 
